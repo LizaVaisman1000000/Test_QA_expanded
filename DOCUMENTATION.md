@@ -1,8 +1,11 @@
 # Design Documentation
 
 ## Environment
-- Python 3.15.2, virtual environment in `venv/` (not committed)
-- Libraries installed: none so far
+- Python 3.13 (virtual environment in `venv/`, not committed)
+- Libraries installed (see `requirements.txt`):
+  - PyYAML 6.0.3: required by the provided `src/utils/config.py` to read `config/config.yaml`
+- Note: Python 3.15 was tried first, but PyYAML has no prebuilt package for it yet and
+  could not be compiled without a C compiler, so the environment was rebuilt on Python 3.13.
 
 ## Bugs found and fixed
 
