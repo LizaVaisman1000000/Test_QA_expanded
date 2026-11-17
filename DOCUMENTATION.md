@@ -37,6 +37,14 @@
 - Run ids are validated so an id like `../secret` cannot read files outside the results folder.
 - `compare_runs` compares mean, median, standard deviation and coefficient of variation between two runs, with the percentage change.
 
+### Test framework (`src/testing/test_framework.py`)
+- `AmmeterTestFramework.run()` is the single entry point: it validates the request, starts the emulators if configured, samples each ammeter, analyzes the readings and saves one run. `run_test(ammeter_type)` tests a single ammeter. The file arrived as a skeleton (`run_test` only said `pass`, and `Dict` was not imported); it was implemented keeping its original class name, constructor and method signature.
+- Emulators are started automatically by default (`start_emulators: true`) and can be turned off in `config.yaml`, so the same framework can test real devices.
+- The framework waits until an emulator accepts connections, instead of sleeping a fixed time: faster when the server starts quickly, and a clear error if it never starts.
+- Ammeter names and sampling settings are validated before anything starts, so mistakes fail immediately and not after a long test.
+- Sampling settings come either from explicit arguments or from `config.yaml`, never a mix of both, to avoid contradicting settings.
+- Observation: Greenlee readings are very spread out (resistance 0.1-100 Ohm gives currents from about 0.01 A to 100 A), so the median is a more robust measure than the mean for comparing ammeters.
+
 ## Bugs found and fixed
 
 | # | File | Problem | Fix | Why |
