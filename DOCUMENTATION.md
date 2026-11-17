@@ -12,6 +12,7 @@
 | 2 | main.py | Truncated commands (e.g. `MEASURE_GREENLEE`) | Use full commands from README | The emulator compares the request to its command exactly and silently ignores anything else |
 | 3 | main.py | Request lines were commented out | Re-enabled them | Otherwise nothing is requested or printed |
 | 4 | Circutor_Ammeter.py | Expected `MEASURE_CIRCUTOR -get_measurement -current`, which disagrees with README and config.yaml | Removed the `-current` suffix | Two documents agree on the shorter command, so the emulator was the outlier |
+| 5 | base_ammeter.py | Server could not restart immediately ("Address already in use") | Added `SO_REUSEADDR` before `bind` | The OS reserves a closed port briefly; this option allows immediate reuse |
 
 ## README inconsistencies
 - README lists `src/testing/AmmeterTester.py`, but the repo contains `src/testing/test_framework.py`.
