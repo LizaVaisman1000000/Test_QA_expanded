@@ -25,3 +25,4 @@ analysis:
     plot_types:
 
 result_management:
+  directory: results/runs      # one JSON file per test run is saved here

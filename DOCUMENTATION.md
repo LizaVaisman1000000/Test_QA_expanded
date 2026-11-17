@@ -29,6 +29,14 @@
 - The coefficient of variation (std dev / mean x 100) is included so ammeters with very different ranges (CIRCUTOR ~0.01 A, ENTES ~100 A) can be compared fairly. It is the basis for the accuracy comparison.
 - Verified against hand-calculated values (1, 2, 3, 4, 5 gives mean 3, median 3, std dev 1.5811) and the all-failed, single-reading and empty cases.
 
+### Result management (`src/testing/result_store.py`)
+- Each test run is saved as one human-readable JSON file in `results/runs/`. A run holds a unique id, creation time, metadata (Python version, platform, notes), the settings used, the raw readings and the computed statistics per ammeter.
+- Run ids combine a timestamp (with microseconds) and a random suffix: readable, sorted in creation order, and unique. A first version used a timestamp with whole seconds, and two runs saved in the same second were listed in the wrong order; microseconds fixed this.
+- Files are written to a temporary file and then renamed, so a crash while saving cannot leave a corrupt result file.
+- `list_runs` skips a damaged file with a warning instead of failing, so one bad file does not hide the other runs.
+- Run ids are validated so an id like `../secret` cannot read files outside the results folder.
+- `compare_runs` compares mean, median, standard deviation and coefficient of variation between two runs, with the percentage change.
+
 ## Bugs found and fixed
 
 | # | File | Problem | Fix | Why |
