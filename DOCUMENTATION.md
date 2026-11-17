@@ -45,6 +45,15 @@
 - Sampling settings come either from explicit arguments or from `config.yaml`, never a mix of both, to avoid contradicting settings.
 - Observation: Greenlee readings are very spread out (resistance 0.1-100 Ohm gives currents from about 0.01 A to 100 A), so the median is a more robust measure than the mean for comparing ammeters.
 
+### Reporting and command line (`src/testing/report.py`, `cli.py`)
+- Report functions take plain dictionaries, so one table format serves both a fresh test and a run loaded from a saved JSON file.
+- Failed readings are never hidden: the report lists which ammeter failed and why.
+- The command line uses Python's built-in `argparse` (no extra library, works on every OS): `run`, `list`, `show` and `compare`. Expected mistakes (unknown ammeter, unknown run id, bad settings) print one `Error:` line and no traceback.
+- Observation from the sample runs: the mean of the Greenlee readings changed by -46.8% between two runs while the median changed by only +15.5%. A single large reading pulls the mean, so the median is the more stable summary for ammeters with widely spread readings.
+
+## Sample test results
+Two real runs are saved in `results/runs/` (run ids appear in `python cli.py list`): one with all three ammeters, one with Greenlee only. They can be displayed with `python cli.py show <run id>` and compared with `python cli.py compare <run id A> <run id B>`.
+
 ## Bugs found and fixed
 
 | # | File | Problem | Fix | Why |

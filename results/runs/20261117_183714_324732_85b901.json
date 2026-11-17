@@ -1,0 +1,159 @@
+{
+  "run_id": "20261117_183714_324732_85b901",
+  "created_at": "2026-11-17T18:37:14",
+  "metadata": {
+    "python_version": "3.13.17",
+    "platform": "Windows-11-10.0.26300-SP0",
+    "notes": "first cli run"
+  },
+  "settings": {
+    "measurements_count": 5,
+    "interval_seconds": 0.2,
+    "sampling_frequency_hz": 5.0,
+    "duration_seconds": 1.0,
+    "timeout_seconds": 2.0
+  },
+  "ammeters": {
+    "greenlee": {
+      "stats": {
+        "ammeter": "greenlee",
+        "total": 5,
+        "valid": 5,
+        "failed": 0,
+        "mean": 0.26137247778858397,
+        "median": 0.09343867052099623,
+        "std_dev": 0.4018126270090485,
+        "minimum": 0.04033399506781536,
+        "maximum": 0.9777926077026422,
+        "cv_percent": 153.73180466769045,
+        "errors": {}
+      },
+      "measurements": [
+        {
+          "ammeter": "greenlee",
+          "timestamp": 1794933430.8252945,
+          "value": 0.128348133935869,
+          "error": null
+        },
+        {
+          "ammeter": "greenlee",
+          "timestamp": 1794933431.0257897,
+          "value": 0.9777926077026422,
+          "error": null
+        },
+        {
+          "ammeter": "greenlee",
+          "timestamp": 1794933431.2258663,
+          "value": 0.09343867052099623,
+          "error": null
+        },
+        {
+          "ammeter": "greenlee",
+          "timestamp": 1794933431.4254644,
+          "value": 0.04033399506781536,
+          "error": null
+        },
+        {
+          "ammeter": "greenlee",
+          "timestamp": 1794933431.6255937,
+          "value": 0.066948981715597,
+          "error": null
+        }
+      ]
+    },
+    "entes": {
+      "stats": {
+        "ammeter": "entes",
+        "total": 5,
+        "valid": 5,
+        "failed": 0,
+        "mean": 44.56495270333056,
+        "median": 30.86718206509419,
+        "std_dev": 31.48441161098534,
+        "minimum": 12.821700142863238,
+        "maximum": 86.39843426881193,
+        "cv_percent": 70.64836760980641,
+        "errors": {}
+      },
+      "measurements": [
+        {
+          "ammeter": "entes",
+          "timestamp": 1794933432.1625185,
+          "value": 30.86718206509419,
+          "error": null
+        },
+        {
+          "ammeter": "entes",
+          "timestamp": 1794933432.3627303,
+          "value": 86.39843426881193,
+          "error": null
+        },
+        {
+          "ammeter": "entes",
+          "timestamp": 1794933432.5631564,
+          "value": 12.821700142863238,
+          "error": null
+        },
+        {
+          "ammeter": "entes",
+          "timestamp": 1794933432.7627723,
+          "value": 23.860254711765734,
+          "error": null
+        },
+        {
+          "ammeter": "entes",
+          "timestamp": 1794933432.9627495,
+          "value": 68.87719232811772,
+          "error": null
+        }
+      ]
+    },
+    "circutor": {
+      "stats": {
+        "ammeter": "circutor",
+        "total": 5,
+        "valid": 5,
+        "failed": 0,
+        "mean": 0.021661316051906816,
+        "median": 0.01469008964019089,
+        "std_dev": 0.012749068071192273,
+        "minimum": 0.010968618109530249,
+        "maximum": 0.03956342744496918,
+        "cv_percent": 58.85638730648589,
+        "errors": {}
+      },
+      "measurements": [
+        {
+          "ammeter": "circutor",
+          "timestamp": 1794933433.5112057,
+          "value": 0.012412348466946293,
+          "error": null
+        },
+        {
+          "ammeter": "circutor",
+          "timestamp": 1794933433.7113013,
+          "value": 0.01469008964019089,
+          "error": null
+        },
+        {
+          "ammeter": "circutor",
+          "timestamp": 1794933433.91149,
+          "value": 0.03956342744496918,
+          "error": null
+        },
+        {
+          "ammeter": "circutor",
+          "timestamp": 1794933434.1113155,
+          "value": 0.03067209659789747,
+          "error": null
+        },
+        {
+          "ammeter": "circutor",
+          "timestamp": 1794933434.3114808,
+          "value": 0.010968618109530249,
+          "error": null
+        }
+      ]
+    }
+  }
+}
