@@ -15,6 +15,12 @@
 - `measure()` never raises. A failed reading (timeout, refused connection, unknown command, non-numeric reply) is returned with `value=None` and the reason in `error`, so one bad reading cannot stop a long test.
 - Note: on Windows, a request to a port with nothing listening ends as a timeout and not as "connection refused" (Windows keeps retrying for about 2 seconds); Linux/macOS report "refused" immediately.
 
+### Measurement sampling (`src/testing/sampler.py`)
+- Count, duration and frequency depend on each other (count = duration x frequency), so any two of them can be given. `resolve_sampling_plan` computes the rest and rejects missing, non-positive or contradicting settings with a clear message.
+- Readings are scheduled against the start time (start + i x interval) and not by sleeping a fixed interval after each reading. This prevents drift: the time spent measuring would otherwise accumulate. If a reading is late (e.g. a timeout), the next one is taken immediately and the schedule catches up.
+- `time.perf_counter()` is used because it is a monotonic clock, unaffected by system clock changes during a test.
+- Measured result: 5 readings at 4 Hz were spaced 0.25 s apart, with no drift.
+
 ## Bugs found and fixed
 
 | # | File | Problem | Fix | Why |
