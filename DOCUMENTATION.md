@@ -7,6 +7,14 @@
 - Note: Python 3.15 was tried first, but PyYAML has no prebuilt package for it yet and
   could not be compiled without a C compiler, so the environment was rebuilt on Python 3.13.
 
+## Design decisions
+
+### Unified measurement interface (`src/testing/ammeter_client.py`)
+- One configurable `AmmeterClient` class instead of one subclass per brand. The ammeters differ only in port and command, so both come from `config/config.yaml`. Adding an ammeter means adding a config block, with no new code.
+- Every reading is returned as a `Measurement` object (ammeter, timestamp, value, error), so results look the same for every brand.
+- `measure()` never raises. A failed reading (timeout, refused connection, unknown command, non-numeric reply) is returned with `value=None` and the reason in `error`, so one bad reading cannot stop a long test.
+- Note: on Windows, a request to a port with nothing listening ends as a timeout and not as "connection refused" (Windows keeps retrying for about 2 seconds); Linux/macOS report "refused" immediately.
+
 ## Bugs found and fixed
 
 | # | File | Problem | Fix | Why |
