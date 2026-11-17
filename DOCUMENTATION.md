@@ -21,6 +21,14 @@
 - `time.perf_counter()` is used because it is a monotonic clock, unaffected by system clock changes during a test.
 - Measured result: 5 readings at 4 Hz were spaced 0.25 s apart, with no drift.
 
+### Result analysis (`src/testing/analysis.py`)
+- `analyze()` computes mean, median, standard deviation, minimum and maximum for one ammeter, plus the number of valid and failed readings and a count of each failure reason.
+- Failed readings are excluded from the statistics. Counting a failure as 0 A would distort every metric; instead failures are reported separately.
+- Sample standard deviation (n-1) is used, since the readings are a sample of the ammeter's behavior.
+- Edge cases return `None` instead of crashing or inventing numbers: no valid readings gives no statistics, and fewer than two valid readings gives no standard deviation.
+- The coefficient of variation (std dev / mean x 100) is included so ammeters with very different ranges (CIRCUTOR ~0.01 A, ENTES ~100 A) can be compared fairly. It is the basis for the accuracy comparison.
+- Verified against hand-calculated values (1, 2, 3, 4, 5 gives mean 3, median 3, std dev 1.5811) and the all-failed, single-reading and empty cases.
+
 ## Bugs found and fixed
 
 | # | File | Problem | Fix | Why |
