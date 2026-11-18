@@ -50,6 +50,9 @@ python cli.py run --count 15 --frequency 5 --simulate-failures 0.3 --seed 1
 
 # Quick demo: start the emulators and request one reading from each
 python main.py
+
+# Minimal example of using the framework from Python
+python -m examples.run_tests
 ```
 
 Every `run` prints a statistics table (mean, median, standard deviation,
@@ -109,4 +112,5 @@ other request is silently ignored.
 - `results/runs/`: sample test results (one JSON file per run)
 - `results/logs/`: text log of each run (created when you run a test; not committed)
 - `results/plots/`: sample charts (PNG files, created by `cli.py plot`)
+- `examples/run_tests.py`: minimal example of using the framework (run with `python -m examples.run_tests`)
 - `DOCUMENTATION.md`: design decisions and the list of bugs fixed in the provided code
