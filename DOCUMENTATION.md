@@ -63,6 +63,15 @@ Two real runs are saved in `results/runs/` (run ids appear in `python cli.py lis
 - Limitation: the emulators are random number generators, so their "consistency" reflects the width of each random range, not the quality of a real device. The method applies unchanged to real devices.
 - `--reference` is meaningful only when every ammeter measures the same real current (real devices on one circuit). For the emulators, which draw independent random values, it was tested only to check that the report changes correctly: all three showed errors of 99% or more, which carries no meaning about their quality.
 
+### Error simulation (`src/testing/fault_injection.py`)
+- Failures are injected on the server side: a subclass of the emulator replaces `send_reply` and sometimes misbehaves. The real client and error handling are therefore tested end to end, with nothing mocked.
+- Three failure types match the three ways a real device can fail: `timeout` (the reply arrives later than the client's timeout), `garbage` (the reply is not a number) and `no_reply` (the connection closes without a reply). The delay of a simulated timeout is always the client timeout plus 0.5 s, otherwise the late reply would still arrive in time.
+- The failure pattern is reproducible with a seed. A private `random.Random` is used because the emulators reseed the global generator with the clock, and the seed is offset per ammeter so the three do not fail at the same readings.
+- Switch on with `testing.simulation` in `config.yaml` or per run with `python cli.py run --simulate-failures RATE --seed N`. The simulation settings are saved with the run, and the report prints a note, so intentional failures are never mistaken for a faulty device. It requires `start_emulators: true` and fails with a clear error otherwise, because failures cannot be injected into devices that are already running.
+- Sample run (15 readings at 5 Hz, failure rate 0.3, seed 1): 8 of 15 Greenlee readings failed (3 timeouts, 5 non-numeric), 4 of 15 ENTES and 5 of 15 CIRCUTOR; 17 of 45 in total (38%). Every failure was reported with its reason and excluded from the statistics. Success rates were 47%, 73% and 67%, so `evaluate` ranked ENTES first.
+- Observation: for each ammeter the number of failed readings equalled the number of simulated failures, so a timed-out request does not make the following reading fail. The next request waits in the server's queue (about 0.5 s) and is still answered within the client timeout.
+- Limitation: with 15 readings, 73% against 67% is a difference of one reading, so the ranking of ENTES and CIRCUTOR in this run is not statistically meaningful.
+
 ## Bugs found and fixed
 
 | # | File | Problem | Fix | Why |

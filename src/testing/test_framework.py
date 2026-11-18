@@ -8,6 +8,7 @@ from Ammeters.Entes_Ammeter import EntesAmmeter
 from Ammeters.Greenlee_Ammeter import GreenleeAmmeter
 from src.testing.ammeter_client import AmmeterClient
 from src.testing.analysis import analyze
+from src.testing.fault_injection import FAILURE_TYPES, make_faulty
 from src.testing.result_store import ResultStore
 from src.testing.sampler import resolve_sampling_plan, collect_samples
 from src.utils.config import load_config
@@ -44,6 +45,18 @@ class AmmeterTestFramework:
             frequency = sampling["sampling_frequency_hz"]
         return resolve_sampling_plan(count, duration, frequency)
 
+    def _simulation_settings(self) -> Optional[dict]:
+        """Failure-simulation settings from config.yaml, or None when switched off."""
+        simulation = self.config["testing"].get("simulation") or {}
+        if not simulation.get("enabled"):
+            return None
+        if not self.config["testing"]["start_emulators"]:
+            # Failures are injected into emulators we start ourselves; they cannot
+            # be injected into devices that are already running. Fail loudly
+            # instead of silently running a test with no simulation.
+            raise ValueError("Failure simulation needs start_emulators: true")
+        return simulation
+
     def _wait_until_ready(self, port: int, timeout: float = 5.0):
         """Wait until the emulator accepts connections, instead of sleeping a fixed time.
 
@@ -69,6 +82,21 @@ class AmmeterTestFramework:
         if emulator_class is None:
             raise ValueError(f"No emulator available for '{name}'. "
                              f"Set start_emulators: false to test real devices.")
+
+        simulation = self._simulation_settings()
+        if simulation:
+            seed = simulation.get("seed")
+            emulator_class = make_faulty(
+                emulator_class,
+                failure_rate=simulation["failure_rate"],
+                failure_types=simulation.get("failure_types") or FAILURE_TYPES,
+                # A "timeout" failure must outlast the client's timeout, or the
+                # client would still receive the reply and nothing would fail.
+                delay_seconds=self.config["testing"]["timeout_seconds"] + 0.5,
+                # Offset the seed per ammeter, so they do not all fail at the
+                # same readings, while each one stays repeatable.
+                seed=None if seed is None else seed + list(EMULATORS).index(name))
+
         port = self.config["ammeters"][name]["port"]
         # daemon=True: the emulator stops when the program ends.
         threading.Thread(target=emulator_class(port).start_server, daemon=True).start()
@@ -85,6 +113,7 @@ class AmmeterTestFramework:
         # or the settings fails immediately and not after a long wait.
         client = AmmeterClient.from_config(ammeter_type, self.config)
         count, interval = self._plan(count, duration, frequency)
+        simulation = self._simulation_settings()
 
         self._ensure_emulator(ammeter_type)
         measurements = collect_samples(client, count, interval)
@@ -96,6 +125,9 @@ class AmmeterTestFramework:
                 "sampling_frequency_hz": 1.0 / interval,
                 "duration_seconds": count * interval,
                 "timeout_seconds": client.timeout,
+                # Saved with the run, so failed readings in an old result are
+                # never mistaken for real device faults.
+                "simulation": simulation,
             },
             "measurements": measurements,
             "stats": analyze(measurements),

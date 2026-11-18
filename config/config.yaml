@@ -6,7 +6,12 @@ testing:
     measurements_count: 10
     total_duration_seconds: null   # null = calculated from count and frequency
     sampling_frequency_hz: 2
-
+  simulation:                  # make the emulators fail on purpose (needs start_emulators: true)
+    enabled: false
+    failure_rate: 0.2          # probability that one reading fails (0 to 1)
+    failure_types: [timeout, garbage, no_reply]
+    seed: null                 # a number makes the failure pattern repeatable
+    
 ammeters:
   greenlee:
     port: 5000

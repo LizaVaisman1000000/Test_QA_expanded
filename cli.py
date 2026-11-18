@@ -12,11 +12,21 @@ from src.utils.config import load_config
 
 def cmd_run(args):
     framework = AmmeterTestFramework(args.config)
+    if args.simulate_failures is not None:
+        # Switch failure simulation on for this run only; config.yaml is not changed.
+        simulation = framework.config["testing"].get("simulation") or {}
+        simulation.update(enabled=True, failure_rate=args.simulate_failures)
+        if args.seed is not None:
+            simulation["seed"] = args.seed
+        framework.config["testing"]["simulation"] = simulation
     outcome = framework.run(ammeters=args.ammeters, count=args.count,
                             duration=args.duration, frequency=args.frequency,
                             save=not args.no_save, notes=args.notes)
     stats = {name: asdict(r["stats"]) for name, r in outcome["results"].items()}
     print("\n" + format_stats_table(stats))
+    first = next(iter(outcome["results"].values()))
+    if first["settings"].get("simulation"):
+        print("\nNote: failure simulation was ON for this run; failed readings are intentional.")
     if outcome["run_id"]:
         print(f"\nSaved as run {outcome['run_id']}")
 
@@ -61,6 +71,10 @@ def build_parser():
     run.add_argument("--frequency", type=float, help="measurements per second (Hz)")
     run.add_argument("--notes", default="", help="free text saved with the run")
     run.add_argument("--no-save", action="store_true", help="do not save the result")
+    run.add_argument("--simulate-failures", type=float, metavar="RATE",
+                     help="make readings fail on purpose with this probability (0 to 1)")
+    run.add_argument("--seed", type=int,
+                     help="repeat the same simulated failures (use with --simulate-failures)")
     run.set_defaults(func=cmd_run)
 
     sub.add_parser("list", help="list saved runs").set_defaults(func=cmd_list)

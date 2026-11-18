@@ -40,6 +40,9 @@ python cli.py compare <run id A> <run id B>
 python cli.py evaluate <run id>                  # rank the ammeters of a saved run
 python cli.py evaluate <run id> --reference 10   # also compare against a known true current (A)
 
+# Make readings fail on purpose to check error handling (the framework starts the emulators)
+python cli.py run --count 15 --frequency 5 --simulate-failures 0.3 --seed 1
+
 # Quick demo: start the emulators and request one reading from each
 python main.py
 ```
@@ -64,6 +67,7 @@ print(outcome["results"]["greenlee"]["stats"])
 | `testing.start_emulators` | `true`: start the emulators automatically; `false`: use ammeters that are already running |
 | `testing.host`, `testing.timeout_seconds` | where to connect and how long to wait for a reply |
 | `testing.sampling.*` | default count / duration / frequency (any two are enough) |
+| `testing.simulation.*` | failure simulation: `enabled`, `failure_rate` (0 to 1), `failure_types` (`timeout`, `garbage`, `no_reply`), `seed` (repeatable pattern); needs `start_emulators: true` |
 | `ammeters.<name>.port`, `.command` | one block per ammeter; add a block to add an ammeter |
 | `result_management.directory` | where saved runs are stored |
 
@@ -88,6 +92,7 @@ other request is silently ignored.
   - `analysis.py`: statistics
   - `result_store.py`: saving, loading, listing and comparing runs
   - `comparison.py`: precision and accuracy comparison, ranking of the ammeters
+  - `fault_injection.py`: makes an emulator fail on purpose (timeout, garbage reply, no reply)
   - `report.py`: text tables
   - `test_framework.py`: `AmmeterTestFramework`, ties everything together
 - `src/utils/`: `config.py`, `Utils.py`, `logger.py`

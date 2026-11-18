@@ -1,0 +1,358 @@
+{
+  "run_id": "20261118_152238_790834_b4fefa",
+  "created_at": "2026-11-18T15:22:38",
+  "metadata": {
+    "python_version": "3.13.17",
+    "platform": "Windows-11-10.0.26300-SP0",
+    "notes": "simulated failures"
+  },
+  "settings": {
+    "measurements_count": 15,
+    "interval_seconds": 0.2,
+    "sampling_frequency_hz": 5.0,
+    "duration_seconds": 3.0,
+    "timeout_seconds": 2.0,
+    "simulation": {
+      "enabled": true,
+      "failure_rate": 0.3,
+      "failure_types": [
+        "timeout",
+        "garbage",
+        "no_reply"
+      ],
+      "seed": 1
+    }
+  },
+  "ammeters": {
+    "greenlee": {
+      "stats": {
+        "ammeter": "greenlee",
+        "total": 15,
+        "valid": 7,
+        "failed": 8,
+        "mean": 0.3649419332375405,
+        "median": 0.09319859566324155,
+        "std_dev": 0.6732221638831619,
+        "minimum": 0.021950288719396617,
+        "maximum": 1.8828003122129482,
+        "cv_percent": 184.47377584448813,
+        "errors": {
+          "timeout after 2.0s": 3,
+          "reply was not a number": 5
+        }
+      },
+      "measurements": [
+        {
+          "ammeter": "greenlee",
+          "timestamp": 1795008141.8121948,
+          "value": null,
+          "error": "timeout after 2.0s"
+        },
+        {
+          "ammeter": "greenlee",
+          "timestamp": 1795008143.8369346,
+          "value": null,
+          "error": "reply was not a number"
+        },
+        {
+          "ammeter": "greenlee",
+          "timestamp": 1795008144.3300571,
+          "value": 0.26102312181679244,
+          "error": null
+        },
+        {
+          "ammeter": "greenlee",
+          "timestamp": 1795008144.3394363,
+          "value": 0.11207286661545242,
+          "error": null
+        },
+        {
+          "ammeter": "greenlee",
+          "timestamp": 1795008144.341482,
+          "value": 0.09311385949807878,
+          "error": null
+        },
+        {
+          "ammeter": "greenlee",
+          "timestamp": 1795008144.3429358,
+          "value": null,
+          "error": "reply was not a number"
+        },
+        {
+          "ammeter": "greenlee",
+          "timestamp": 1795008144.3441575,
+          "value": null,
+          "error": "reply was not a number"
+        },
+        {
+          "ammeter": "greenlee",
+          "timestamp": 1795008144.3456433,
+          "value": 1.8828003122129482,
+          "error": null
+        },
+        {
+          "ammeter": "greenlee",
+          "timestamp": 1795008144.3479912,
+          "value": 0.021950288719396617,
+          "error": null
+        },
+        {
+          "ammeter": "greenlee",
+          "timestamp": 1795008144.3503919,
+          "value": null,
+          "error": "reply was not a number"
+        },
+        {
+          "ammeter": "greenlee",
+          "timestamp": 1795008144.3717842,
+          "value": null,
+          "error": "timeout after 2.0s"
+        },
+        {
+          "ammeter": "greenlee",
+          "timestamp": 1795008146.3741796,
+          "value": 0.09043448813687349,
+          "error": null
+        },
+        {
+          "ammeter": "greenlee",
+          "timestamp": 1795008146.8743393,
+          "value": null,
+          "error": "reply was not a number"
+        },
+        {
+          "ammeter": "greenlee",
+          "timestamp": 1795008146.889257,
+          "value": null,
+          "error": "timeout after 2.0s"
+        },
+        {
+          "ammeter": "greenlee",
+          "timestamp": 1795008148.8951387,
+          "value": 0.09319859566324155,
+          "error": null
+        }
+      ]
+    },
+    "entes": {
+      "stats": {
+        "ammeter": "entes",
+        "total": 15,
+        "valid": 11,
+        "failed": 4,
+        "mean": 71.33376173059725,
+        "median": 69.56086244289736,
+        "std_dev": 44.68592661737661,
+        "minimum": 17.68788017189176,
+        "maximum": 164.67665287118982,
+        "cv_percent": 62.64344615126254,
+        "errors": {
+          "timeout after 2.0s": 2,
+          "no reply (command not recognized?)": 1,
+          "reply was not a number": 1
+        }
+      },
+      "measurements": [
+        {
+          "ammeter": "entes",
+          "timestamp": 1795008149.9152577,
+          "value": 58.42881803289372,
+          "error": null
+        },
+        {
+          "ammeter": "entes",
+          "timestamp": 1795008150.1157079,
+          "value": 41.09182301540488,
+          "error": null
+        },
+        {
+          "ammeter": "entes",
+          "timestamp": 1795008150.3157601,
+          "value": null,
+          "error": "timeout after 2.0s"
+        },
+        {
+          "ammeter": "entes",
+          "timestamp": 1795008152.3380446,
+          "value": 17.68788017189176,
+          "error": null
+        },
+        {
+          "ammeter": "entes",
+          "timestamp": 1795008152.839196,
+          "value": null,
+          "error": "no reply (command not recognized?)"
+        },
+        {
+          "ammeter": "entes",
+          "timestamp": 1795008152.858824,
+          "value": 77.23602801514036,
+          "error": null
+        },
+        {
+          "ammeter": "entes",
+          "timestamp": 1795008152.8611038,
+          "value": null,
+          "error": "timeout after 2.0s"
+        },
+        {
+          "ammeter": "entes",
+          "timestamp": 1795008154.8894107,
+          "value": 31.414561276171664,
+          "error": null
+        },
+        {
+          "ammeter": "entes",
+          "timestamp": 1795008155.3760912,
+          "value": 164.67665287118982,
+          "error": null
+        },
+        {
+          "ammeter": "entes",
+          "timestamp": 1795008155.3896859,
+          "value": null,
+          "error": "reply was not a number"
+        },
+        {
+          "ammeter": "entes",
+          "timestamp": 1795008155.3925512,
+          "value": 73.53462391022212,
+          "error": null
+        },
+        {
+          "ammeter": "entes",
+          "timestamp": 1795008155.4095552,
+          "value": 124.87128677985436,
+          "error": null
+        },
+        {
+          "ammeter": "entes",
+          "timestamp": 1795008155.411429,
+          "value": 26.63105440957459,
+          "error": null
+        },
+        {
+          "ammeter": "entes",
+          "timestamp": 1795008155.423865,
+          "value": 99.537788111329,
+          "error": null
+        },
+        {
+          "ammeter": "entes",
+          "timestamp": 1795008155.4270618,
+          "value": 69.56086244289736,
+          "error": null
+        }
+      ]
+    },
+    "circutor": {
+      "stats": {
+        "ammeter": "circutor",
+        "total": 15,
+        "valid": 10,
+        "failed": 5,
+        "mean": 0.030268946544876,
+        "median": 0.031761209138302486,
+        "std_dev": 0.01359331601351588,
+        "minimum": 0.007713450794438644,
+        "maximum": 0.04862346643356625,
+        "cv_percent": 44.90845425810496,
+        "errors": {
+          "no reply (command not recognized?)": 5
+        }
+      },
+      "measurements": [
+        {
+          "ammeter": "circutor",
+          "timestamp": 1795008155.969665,
+          "value": null,
+          "error": "no reply (command not recognized?)"
+        },
+        {
+          "ammeter": "circutor",
+          "timestamp": 1795008156.1704843,
+          "value": null,
+          "error": "no reply (command not recognized?)"
+        },
+        {
+          "ammeter": "circutor",
+          "timestamp": 1795008156.3700745,
+          "value": 0.025699043457891996,
+          "error": null
+        },
+        {
+          "ammeter": "circutor",
+          "timestamp": 1795008156.5705576,
+          "value": 0.030238013621210164,
+          "error": null
+        },
+        {
+          "ammeter": "circutor",
+          "timestamp": 1795008156.7704632,
+          "value": 0.03841208290369526,
+          "error": null
+        },
+        {
+          "ammeter": "circutor",
+          "timestamp": 1795008156.9702213,
+          "value": 0.009324335739291478,
+          "error": null
+        },
+        {
+          "ammeter": "circutor",
+          "timestamp": 1795008157.1702032,
+          "value": 0.04417684371928196,
+          "error": null
+        },
+        {
+          "ammeter": "circutor",
+          "timestamp": 1795008157.3702626,
+          "value": 0.04862346643356625,
+          "error": null
+        },
+        {
+          "ammeter": "circutor",
+          "timestamp": 1795008157.5701113,
+          "value": null,
+          "error": "no reply (command not recognized?)"
+        },
+        {
+          "ammeter": "circutor",
+          "timestamp": 1795008157.770283,
+          "value": 0.007713450794438644,
+          "error": null
+        },
+        {
+          "ammeter": "circutor",
+          "timestamp": 1795008157.9700356,
+          "value": 0.03328440465539481,
+          "error": null
+        },
+        {
+          "ammeter": "circutor",
+          "timestamp": 1795008158.1698909,
+          "value": 0.02636313180654365,
+          "error": null
+        },
+        {
+          "ammeter": "circutor",
+          "timestamp": 1795008158.370257,
+          "value": 0.0388546923174458,
+          "error": null
+        },
+        {
+          "ammeter": "circutor",
+          "timestamp": 1795008158.5701199,
+          "value": null,
+          "error": "no reply (command not recognized?)"
+        },
+        {
+          "ammeter": "circutor",
+          "timestamp": 1795008158.7703235,
+          "value": null,
+          "error": "no reply (command not recognized?)"
+        }
+      ]
+    }
+  }
+}
