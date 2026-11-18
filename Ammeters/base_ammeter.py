@@ -16,24 +16,34 @@ class AmmeterEmulatorBase(ABC):
         The server will run indefinitely, handling one client request at a time.
         """
         with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
-                # Fix: allow the port to be reused right after the previous run stops.
-                # Without this, restarting the emulators quickly can fail with
-                # "Address already in use", because the operating system keeps a
-                # closed port reserved for a short time (the main.py comment about
-                # "problems restarting the servers" was hinting at this).
-            s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)  # allow quick restarts
+            # Fix: allow the port to be reused right after the previous run stops.
+            # Without this, restarting the emulators quickly can fail with
+            # "Address already in use", because the operating system keeps a
+            # closed port reserved for a short time.
+            s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
             s.bind(('localhost', self.port))
             s.listen()
             print(f"{self.__class__.__name__} is running on port {self.port}")
             while True:
                 conn, addr = s.accept()
-                with conn:
-                    print(f"Connected by {addr}")
-                    data = conn.recv(1024)
-                    if data == self.get_current_command:
-                        # Call the specific measure_current() method defined in subclasses
-                        current = self.measure_current()
-                        conn.sendall(str(current).encode('utf-8'))
+                # Added: a client that disconnects early (e.g. after a timeout) makes
+                # sending raise OSError. Without this, the exception would end the
+                # server thread and the ammeter would silently disappear.
+                try:
+                    with conn:
+                        print(f"Connected by {addr}")
+                        data = conn.recv(1024)
+                        if data == self.get_current_command:
+                            # Call the specific measure_current() method defined in subclasses
+                            current = self.measure_current()
+                            self.send_reply(conn, current)
+                except OSError as e:
+                    print(f"Connection with {addr} failed: {e}")
+
+    def send_reply(self, conn, current: float):
+        """Send the measurement to the client. Separate method so that failure
+        simulation can replace it with a misbehaving version."""
+        conn.sendall(str(current).encode('utf-8'))
 
     @property
     @abstractmethod
@@ -51,4 +61,3 @@ class AmmeterEmulatorBase(ABC):
         logic for current measurement.
         """
         raise NotImplementedError(NotImplementedErrorMsg)
-

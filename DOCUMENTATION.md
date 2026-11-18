@@ -61,6 +61,7 @@ Two real runs are saved in `results/runs/` (run ids appear in `python cli.py lis
 - The report warns when there are fewer than 30 readings per ammeter, because spread statistics are noisy below that.
 - Result of a run with 30 readings per ammeter: CIRCUTOR (CV 45.9%) was the most consistent, then ENTES (57.9%), then Greenlee (108%). These agree with the values expected from the ranges in the README (about 50%, 60% and several hundred percent). Greenlee's spread is heavy-tailed (V/R with R down to 0.1 ohm), so its CV from 30 readings understates the true spread, and the robust CV (82%) is much lower than its CV.
 - Limitation: the emulators are random number generators, so their "consistency" reflects the width of each random range, not the quality of a real device. The method applies unchanged to real devices.
+- `--reference` is meaningful only when every ammeter measures the same real current (real devices on one circuit). For the emulators, which draw independent random values, it was tested only to check that the report changes correctly: all three showed errors of 99% or more, which carries no meaning about their quality.
 
 ## Bugs found and fixed
 
@@ -73,6 +74,7 @@ Two real runs are saved in `results/runs/` (run ids appear in `python cli.py lis
 | 5 | base_ammeter.py | Server could fail to restart immediately ("Address already in use") on some systems | Added `SO_REUSEADDR` before `bind` | The OS briefly reserves a closed port (mainly Linux/macOS); this allows immediate reuse. Not reproducible on Windows, added for cross-platform compatibility |
 | 6 | client.py | Value was only printed, never returned; no timeout or error handling | Function now returns a float (or None), has a timeout, and catches network and parsing errors | Later code needs the numbers; a dead emulator must not hang or crash a test |
 | 7 | logger.py | `TestLogger` created a log folder and file name but never set a level or attached a file handler, so nothing was ever logged | Set the level, attached a file handler with a timestamped format, disabled propagation, and removed old handlers so repeated creation does not duplicate lines; added `close()` | A logger without a handler discards every message; handlers must be reset because `getLogger` returns the same object for the same name |
+| 8 | base_ammeter.py | An exception while replying (for example the client had already disconnected after a timeout) could end the server thread, and the ammeter would silently disappear | Handling of each connection is wrapped in `try/except OSError`; the reply moved into an overridable `send_reply` method | One broken connection must not take a whole ammeter down; the hook lets failure simulation replace the reply |
 
 ## README inconsistencies
 - README lists `src/testing/AmmeterTester.py`, but the repo contains `src/testing/test_framework.py`.
