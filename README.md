@@ -6,7 +6,8 @@ measurements with configurable timing, computes statistics, and archives every
 test run so runs can be listed and compared later.
 
 ## Requirements
-- Python 3.10 or newer (developed and tested on Python 3.13)
+- Python 3.13 (the version it was tested on; other versions may work but were not tested)
+- Tested on Windows 11 only; see "Testing and limitations" in `DOCUMENTATION.md`
 - PyYAML (used by the provided `src/utils/config.py`)
 - matplotlib (optional: only for charts; everything else works without it)
 

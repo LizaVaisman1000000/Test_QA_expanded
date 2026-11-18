@@ -50,11 +50,8 @@
 ### Reporting and command line (`src/testing/report.py`, `cli.py`)
 - Report functions take plain dictionaries, so one table format serves both a fresh test and a run loaded from a saved JSON file.
 - Failed readings are never hidden: the report lists which ammeter failed and why.
-- The command line uses Python's built-in `argparse` (no extra library, works on every OS): `run`, `list`, `show` and `compare`. Expected mistakes (unknown ammeter, unknown run id, bad settings) print one `Error:` line and no traceback.
+- The command line uses Python's built-in `argparse` (no extra library, works on every OS): `run`, `list`, `show`, `compare`, `evaluate` and `plot`. Expected mistakes (unknown ammeter, unknown run id, bad settings) print one `Error:` line and no traceback.
 - Observation from the sample runs: the mean of the Greenlee readings changed by -46.8% between two runs while the median changed by only +15.5%. A single large reading pulls the mean, so the median is the more stable summary for ammeters with widely spread readings.
-
-## Sample test results
-Two real runs are saved in `results/runs/` (run ids appear in `python cli.py list`): one with all three ammeters, one with Greenlee only. They can be displayed with `python cli.py show <run id>` and compared with `python cli.py compare <run id A> <run id B>`.
 
 ### Accuracy and consistency comparison (`src/testing/comparison.py`)
 - The emulators have no common true current: each generates random values in its own range (about 0.01 A for CIRCUTOR, about 100 A for ENTES). So the comparison measures precision (consistency) by default, and accuracy only when the user supplies a reference value (`--reference`). The report states which of the two it is showing.
@@ -85,7 +82,7 @@ Two real runs are saved in `results/runs/` (run ids appear in `python cli.py lis
 ### Charts (`src/testing/plots.py`)
 - `python cli.py plot <run id>` draws three PNG charts from a saved run into `results/plots/`: `readings` (every reading over time, one panel per ammeter, with the median as a dashed line and failed readings marked with red crosses), `spread` (box plot of the valid readings) and `consistency` (CV and robust CV per ammeter, best first). Which charts are drawn, and where they are saved, is set in `analysis.visualization` in `config.yaml`; `--types` overrides it.
 - matplotlib is the only library needed for this, and it is optional: it is imported only when a chart is requested, so tests, reports, saved runs and every other command work without it. Without it, `plot` prints one clear installation message.
-- Design choices: the readings chart has one panel per ammeter, because the ranges differ by a factor of about 10,000 (CIRCUTOR ~0.03 A, ENTES ~70 A); the spread chart uses a logarithmic axis for the same reason and falls back to a linear axis if a reading is zero or negative. Failed readings leave a gap in the line (a line across a failure would suggest values that were never measured) and are marked along the bottom edge. Legends are placed outside the plot area so they cannot cover data, and the box plot has a caption explaining its symbols. The `Agg` backend draws into files, so charts look the same on every OS and need no display.
+- Design choices: the readings chart has one panel per ammeter, because the ranges differ by a factor of about 2,000 (CIRCUTOR ~0.03 A, ENTES ~70 A); the spread chart uses a logarithmic axis for the same reason and falls back to a linear axis if a reading is zero or negative. Failed readings leave a gap in the line (a line across a failure would suggest values that were never measured) and are marked along the bottom edge. Legends are placed outside the plot area so they cannot cover data, and the box plot has a caption explaining its symbols. The `Agg` backend draws into files, so charts look the same on every OS and need no display.
 - A chart that cannot be drawn (for example `consistency` for a run with a single ammeter) is skipped with a reason, and the other charts are still saved.
 - Sample charts for two saved runs are in `results/plots/`: a 30-reading run without failures, and the 15-reading run with simulated failures. In the first run, Greenlee's box plot shows four outliers above the box, and its mean (triangle) lies above its median; this matches its high CV (108%) against its robust CV (82%).
 - Review: the first version drew a line across failed readings and had a legend covering data points; both were found by checking the images against the saved values and were fixed.
@@ -103,8 +100,27 @@ Two real runs are saved in `results/runs/` (run ids appear in `python cli.py lis
 | 7 | logger.py | `TestLogger` created a log folder and file name but never set a level or attached a file handler, so nothing was ever logged | Set the level, attached a file handler with a timestamped format, disabled propagation, and removed old handlers so repeated creation does not duplicate lines; added `close()` | A logger without a handler discards every message; handlers must be reset because `getLogger` returns the same object for the same name |
 | 8 | base_ammeter.py | An exception while replying (for example the client had already disconnected after a timeout) could end the server thread, and the ammeter would silently disappear | Handling of each connection is wrapped in `try/except OSError`; the reply moved into an overridable `send_reply` method | One broken connection must not take a whole ammeter down; the hook lets failure simulation replace the reply |
 | 9 | examples/run_tests.py | Called `run_test()` without the required ammeter name, and its last loop printed only a heading, never the results | Rewritten as a short working example using `framework.run(...)` and the report table | An example that crashes teaches nothing; it must be run as `python -m examples.run_tests` from the project root so that `src` can be imported |
+| 10 | src/testing/test_framework.py | The skeleton used `Dict` without importing it, had a relative import (`from ..utils.config import ...`) that fails when run from the project root, and `run_test` only said `pass` | Added the import, switched to the absolute import used everywhere else, and implemented the framework | The file could not even be imported as provided |
+
+## Sample test results
+Five real runs are saved in `results/runs/` (list them with `python cli.py list`), and charts for two of them in `results/plots/`. Show a run with `python cli.py show <run id>`, compare two with `python cli.py compare <run id A> <run id B>`, rank its ammeters with `python cli.py evaluate <run id>`.
+
+| Run id | Content |
+|---|---|
+| 20261117_183714_324732_85b901 | all three ammeters, 5 readings at 5 Hz |
+| 20261117_183832_520869_9f8215 | Greenlee only, 5 readings at 5 Hz |
+| 20261118_125847_690140_0aa957 | all three ammeters, 30 readings at 10 Hz; charts: readings, spread, consistency |
+| 20261118_152238_790834_b4fefa | all three ammeters, 15 readings at 5 Hz, simulated failures (rate 0.3, seed 1); chart: readings |
+| 20261118_171554_001944_284bfc | all three ammeters, 6 readings at 5 Hz, simulated failures (rate 0.5, seed 2) |
+
+## Testing and limitations
+- Every feature was run on Windows 11 with Python 3.13, including a fresh clone of the repository set up by following the README (`pip install -r requirements.txt`, then `list`, `run`, `plot` and the example).
+- Linux and macOS were not tested. The code has no operating-system-specific parts (only the standard library, plus PyYAML and optionally matplotlib), but this is not verified. Known platform differences: on Windows a request to a port with nothing listening ends as a timeout and not "connection refused", and on macOS port 5000 is often used by the AirPlay Receiver, so the Greenlee port may need to be changed in `config/config.yaml` (`main.py` uses fixed ports).
+- Python versions other than 3.13 were not tested.
+- Automated tests: there is no test suite in the repository yet. The statistics, sampling, comparison, result store and fault injection were checked with throwaway scripts against hand-calculated values, and the results are described in the sections above.
+- The emulators generate random values, so the numbers in the sample runs differ from run to run, and their "consistency" shows the width of each random range, not the quality of a real device.
 
 ## README inconsistencies
-- README lists `src/testing/AmmeterTester.py`, but the repo contains `src/testing/test_framework.py`.
-- README places `main.py` in `Ammeters/`, but its imports only work from the project root.
-The README was rewritten to match the final project: it listed AmmeterTester.py (never existed) and main.py inside Ammeters/.
+- The README listed `src/testing/AmmeterTester.py`, which does not exist; the repo contains `src/testing/test_framework.py`.
+- The README placed `main.py` inside `Ammeters/`, but its imports only work from the project root.
+- The README was rewritten to match the final project.
