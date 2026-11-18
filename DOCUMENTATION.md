@@ -2,8 +2,10 @@
 
 ## Environment
 - Python 3.13 (virtual environment in `venv/`, not committed)
-- Libraries installed (see `requirements.txt`):
+- Libraries installed (full list with versions in `requirements.txt`):
   - PyYAML 6.0.3: required by the provided `src/utils/config.py` to read `config/config.yaml`
+  - matplotlib 3.11.2: for the optional charts (`cli.py plot`). It also installs its own dependencies, such as numpy and pillow. Nothing else works differently without it.
+- Everything else uses only Python's standard library (`socket`, `statistics`, `json`, `argparse`, `logging`, ...).
 - Note: Python 3.15 was tried first, but PyYAML has no prebuilt package for it yet and
   could not be compiled without a C compiler, so the environment was rebuilt on Python 3.13.
 
@@ -79,6 +81,14 @@ Two real runs are saved in `results/runs/` (run ids appear in `python cli.py lis
 - Limitation: failed readings are logged after all readings of an ammeter have been collected, so the time on a log line is when it was logged, not when the failure happened. The reading number gives the order, and the exact time of every reading is stored in the saved run.
 - Sample: a run with 6 readings at 5 Hz, failure rate 0.5 and seed 2 logged 2 failed readings for Greenlee (4/6 valid), 5 for ENTES (1/6) and 4 for CIRCUTOR (2/6).
 - Repository clean-up: the assignment contained compiled `__pycache__` files for Python 3.10-3.12 and no root `.gitignore`. A `.gitignore` was added (`venv/`, `__pycache__/`, `*.pyc`, `results/logs/`) and the cache files were removed from Git tracking.
+
+### Charts (`src/testing/plots.py`)
+- `python cli.py plot <run id>` draws three PNG charts from a saved run into `results/plots/`: `readings` (every reading over time, one panel per ammeter, with the median as a dashed line and failed readings marked with red crosses), `spread` (box plot of the valid readings) and `consistency` (CV and robust CV per ammeter, best first). Which charts are drawn, and where they are saved, is set in `analysis.visualization` in `config.yaml`; `--types` overrides it.
+- matplotlib is the only library needed for this, and it is optional: it is imported only when a chart is requested, so tests, reports, saved runs and every other command work without it. Without it, `plot` prints one clear installation message.
+- Design choices: the readings chart has one panel per ammeter, because the ranges differ by a factor of about 10,000 (CIRCUTOR ~0.03 A, ENTES ~70 A); the spread chart uses a logarithmic axis for the same reason and falls back to a linear axis if a reading is zero or negative. Failed readings leave a gap in the line (a line across a failure would suggest values that were never measured) and are marked along the bottom edge. Legends are placed outside the plot area so they cannot cover data, and the box plot has a caption explaining its symbols. The `Agg` backend draws into files, so charts look the same on every OS and need no display.
+- A chart that cannot be drawn (for example `consistency` for a run with a single ammeter) is skipped with a reason, and the other charts are still saved.
+- Sample charts for two saved runs are in `results/plots/`: a 30-reading run without failures, and the 15-reading run with simulated failures. In the first run, Greenlee's box plot shows four outliers above the box, and its mean (triangle) lies above its median; this matches its high CV (108%) against its robust CV (82%).
+- Review: the first version drew a line across failed readings and had a legend covering data points; both were found by checking the images against the saved values and were fixed.
 
 ## Bugs found and fixed
 

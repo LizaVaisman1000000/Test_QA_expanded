@@ -3,6 +3,7 @@ import sys
 from dataclasses import asdict
 
 from src.testing.comparison import evaluate_run
+from src.testing.plots import PLOT_TYPES, save_plots
 from src.testing.report import (format_comparison, format_evaluation,
                                 format_run_list, format_stats_table)
 from src.testing.result_store import ResultStore
@@ -29,7 +30,7 @@ def cmd_run(args):
         print("\nNote: failure simulation was ON for this run; failed readings are intentional.")
     if outcome["run_id"]:
         print(f"\nSaved as run {outcome['run_id']}")
-        print(f"Log file: {outcome['log_file']}")
+    print(f"Log file: {outcome['log_file']}")
 
 
 def cmd_list(args, store):
@@ -58,6 +59,21 @@ def cmd_evaluate(args, store):
                 for name, data in run["ammeters"].items()}
     print(f"Run {run['run_id']}\n")
     print(format_evaluation(evaluate_run(readings, args.reference), args.reference))
+
+
+def cmd_plot(args, store):
+    config = load_config(args.config)
+    visualization = (config.get("analysis") or {}).get("visualization") or {}
+    if not visualization.get("enabled", True):
+        raise ValueError("Charts are switched off (analysis.visualization.enabled "
+                         "in config.yaml)")
+    types = args.types or visualization.get("plot_types") or list(PLOT_TYPES)
+    directory = visualization.get("directory", "results/plots")
+    paths, skipped = save_plots(store.load_run(args.run_id), directory, types)
+    for path in paths:
+        print(f"Saved {path}")
+    for plot_type, reason in skipped:
+        print(f"Skipped '{plot_type}': {reason}")
 
 
 def build_parser():
@@ -92,6 +108,12 @@ def build_parser():
     evaluate.add_argument("--reference", type=float,
                           help="known true current in amperes (enables an accuracy check)")
     evaluate.set_defaults(func=cmd_evaluate)
+
+    plot = sub.add_parser("plot", help="draw charts of a saved run (needs matplotlib)")
+    plot.add_argument("run_id")
+    plot.add_argument("--types", nargs="+", choices=PLOT_TYPES,
+                      help="which charts to draw (default: plot_types in config.yaml)")
+    plot.set_defaults(func=cmd_plot)
     return parser
 
 

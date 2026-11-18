@@ -7,7 +7,8 @@ test run so runs can be listed and compared later.
 
 ## Requirements
 - Python 3.10 or newer (developed and tested on Python 3.13)
-- One external library: PyYAML (used by the provided `src/utils/config.py`)
+- PyYAML (used by the provided `src/utils/config.py`)
+- matplotlib (optional: only for charts; everything else works without it)
 
 ## Installation
 ```sh
@@ -39,6 +40,10 @@ python cli.py show <run id>
 python cli.py compare <run id A> <run id B>
 python cli.py evaluate <run id>                  # rank the ammeters of a saved run
 python cli.py evaluate <run id> --reference 10   # also compare against a known true current (A)
+
+# Draw charts of a saved run (PNG files in results/plots/)
+python cli.py plot <run id>
+python cli.py plot <run id> --types readings spread
 
 # Make readings fail on purpose to check error handling (the framework starts the emulators)
 python cli.py run --count 15 --frequency 5 --simulate-failures 0.3 --seed 1
@@ -73,6 +78,7 @@ print(outcome["results"]["greenlee"]["stats"])
 | `ammeters.<name>.port`, `.command` | one block per ammeter; add a block to add an ammeter |
 | `result_management.directory` | where saved runs are stored |
 | `result_management.log_directory` | where the text log of each run is written (not committed to Git) |
+| `analysis.visualization.*` | `enabled`, `directory` for the PNG files, and `plot_types` (`readings`, `spread`, `consistency`) |
 
 ## Ammeter emulators
 | Ammeter | Port | Command | Measurement |
@@ -86,7 +92,7 @@ other request is silently ignored.
 
 ## Project structure
 - `main.py`: quick demo that starts the emulators and requests one reading from each
-- `cli.py`: command-line interface (`run`, `list`, `show`, `compare`, `evaluate`)
+- `cli.py`: command-line interface (`run`, `list`, `show`, `compare`, `evaluate`, `plot`)
 - `Ammeters/`: the emulators (`base_ammeter.py`, one file per brand) and `client.py`
 - `config/config.yaml`: all settings
 - `src/testing/`
@@ -95,10 +101,12 @@ other request is silently ignored.
   - `analysis.py`: statistics
   - `result_store.py`: saving, loading, listing and comparing runs
   - `comparison.py`: precision and accuracy comparison, ranking of the ammeters
+  - `plots.py`: charts of a saved run (readings over time, spread, consistency)
   - `fault_injection.py`: makes an emulator fail on purpose (timeout, garbage reply, no reply)
   - `report.py`: text tables
   - `test_framework.py`: `AmmeterTestFramework`, ties everything together
 - `src/utils/`: `config.py`, `Utils.py`, `logger.py` (per-run log file)
 - `results/runs/`: sample test results (one JSON file per run)
 - `results/logs/`: text log of each run (created when you run a test; not committed)
+- `results/plots/`: sample charts (PNG files, created by `cli.py plot`)
 - `DOCUMENTATION.md`: design decisions and the list of bugs fixed in the provided code

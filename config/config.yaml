@@ -27,7 +27,8 @@ analysis:
   statistical_metrics:
   visualization:
     enabled: true
-    plot_types:
+    directory: results/plots
+    plot_types: [readings, spread, consistency]
 
 result_management:
   directory: results/runs      # one JSON file per test run is saved here
