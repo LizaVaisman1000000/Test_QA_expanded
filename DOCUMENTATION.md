@@ -54,6 +54,14 @@
 ## Sample test results
 Two real runs are saved in `results/runs/` (run ids appear in `python cli.py list`): one with all three ammeters, one with Greenlee only. They can be displayed with `python cli.py show <run id>` and compared with `python cli.py compare <run id A> <run id B>`.
 
+### Accuracy and consistency comparison (`src/testing/comparison.py`)
+- The emulators have no common true current: each generates random values in its own range (about 0.01 A for CIRCUTOR, about 100 A for ENTES). So the comparison measures precision (consistency) by default, and accuracy only when the user supplies a reference value (`--reference`). The report states which of the two it is showing.
+- Consistency is measured with the coefficient of variation (CV = std dev / mean), which puts ammeters with very different ranges on one scale. A robust CV (1.4826 x median absolute deviation / median) is shown next to it: if the CV is much larger than the robust CV, a few extreme readings dominate. The standard error of the mean (CV / sqrt(n)) shows how precisely the mean is known.
+- Ranking rule: ammeters with at least 3 valid readings are ranked first; among them a higher success rate wins (a device that drops readings is less reliable), then a lower CV. Ammeters with fewer than 3 valid readings are listed but not ranked.
+- The report warns when there are fewer than 30 readings per ammeter, because spread statistics are noisy below that.
+- Result of a run with 30 readings per ammeter: CIRCUTOR (CV 45.9%) was the most consistent, then ENTES (57.9%), then Greenlee (108%). These agree with the values expected from the ranges in the README (about 50%, 60% and several hundred percent). Greenlee's spread is heavy-tailed (V/R with R down to 0.1 ohm), so its CV from 30 readings understates the true spread, and the robust CV (82%) is much lower than its CV.
+- Limitation: the emulators are random number generators, so their "consistency" reflects the width of each random range, not the quality of a real device. The method applies unchanged to real devices.
+
 ## Bugs found and fixed
 
 | # | File | Problem | Fix | Why |

@@ -52,3 +52,48 @@ def format_comparison(comparison: dict, run_a: str, run_b: str) -> str:
                 for metric, v in metrics.items()]
         out.append(f"\n{name}\n" + _table(["Metric", "A", "B", "Change"], rows))
     return "\n".join(out)
+
+
+def format_evaluation(ranking: list, reference=None) -> str:
+    headers = ["Rank", "Ammeter", "Success", "Median (A)", "CV (%)",
+               "Robust CV (%)", "Std error (%)"]
+    if reference is not None:
+        headers.append("Error vs ref (%)")
+
+    rows = []
+    for position, e in enumerate(ranking, start=1):
+        row = [str(position) if e.ranked else "-", e.ammeter, f"{e.success_rate:.0f}%",
+               _num(e.median), _num(e.cv_percent, 3), _num(e.robust_cv_percent, 3),
+               _num(e.sem_percent, 3)]
+        if reference is not None:
+            row.append(_num(e.reference_error_percent, 3))
+        rows.append(row)
+    out = [_table(headers, rows)]
+
+    ranked = [e for e in ranking if e.ranked]
+    out.append("")
+    if ranked:
+        best = ranked[0]
+        out.append(f"Most reliable: {best.ammeter} "
+                   f"(success {best.success_rate:.0f}%, CV {_num(best.cv_percent, 3)}%)")
+    else:
+        out.append("No ammeter has enough valid readings to be ranked.")
+    if reference is not None and ranked:
+        closest = min(ranked, key=lambda e: e.reference_error_percent
+                      if e.reference_error_percent is not None else float("inf"))
+        out.append(f"Closest to the reference {reference} A (by median): "
+                   f"{closest.ammeter} (error {_num(closest.reference_error_percent, 3)}%)")
+
+    out.append("")
+    unranked = [e.ammeter for e in ranking if not e.ranked]
+    if unranked:
+        out.append(f"Not ranked (fewer than 3 valid readings): {', '.join(unranked)}")
+    if min(e.total for e in ranking) < 30:
+        out.append("Note: fewer than 30 readings per ammeter; spread statistics are "
+                   "noisy, use more readings for a firm conclusion.")
+    if reference is None:
+        out.append("Note: no reference value given, so this compares precision "
+                   "(consistency) only, not accuracy.")
+    out.append("CV = std dev / mean. Robust CV = same, using the median absolute "
+               "deviation (ignores extreme readings). Std error = CV / sqrt(n).")
+    return "\n".join(out)

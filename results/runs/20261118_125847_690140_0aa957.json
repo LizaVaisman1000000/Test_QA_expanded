@@ -1,0 +1,609 @@
+{
+  "run_id": "20261118_125847_690140_0aa957",
+  "created_at": "2026-11-18T12:58:47",
+  "metadata": {
+    "python_version": "3.13.17",
+    "platform": "Windows-11-10.0.26300-SP0",
+    "notes": "evaluation run"
+  },
+  "settings": {
+    "measurements_count": 30,
+    "interval_seconds": 0.1,
+    "sampling_frequency_hz": 10.0,
+    "duration_seconds": 3.0,
+    "timeout_seconds": 2.0
+  },
+  "ammeters": {
+    "greenlee": {
+      "stats": {
+        "ammeter": "greenlee",
+        "total": 30,
+        "valid": 30,
+        "failed": 0,
+        "mean": 0.1827011587423407,
+        "median": 0.11505903900439504,
+        "std_dev": 0.19804676080044575,
+        "minimum": 0.022558057770719144,
+        "maximum": 0.7323905314999211,
+        "cv_percent": 108.39929104103089,
+        "errors": {}
+      },
+      "measurements": [
+        {
+          "ammeter": "greenlee",
+          "timestamp": 1794999517.900802,
+          "value": 0.32120629811693263,
+          "error": null
+        },
+        {
+          "ammeter": "greenlee",
+          "timestamp": 1794999518.0011082,
+          "value": 0.7323905314999211,
+          "error": null
+        },
+        {
+          "ammeter": "greenlee",
+          "timestamp": 1794999518.1010895,
+          "value": 0.055577623303989694,
+          "error": null
+        },
+        {
+          "ammeter": "greenlee",
+          "timestamp": 1794999518.201102,
+          "value": 0.13947137625686645,
+          "error": null
+        },
+        {
+          "ammeter": "greenlee",
+          "timestamp": 1794999518.3009813,
+          "value": 0.11658451946259704,
+          "error": null
+        },
+        {
+          "ammeter": "greenlee",
+          "timestamp": 1794999518.4010303,
+          "value": 0.09344666821875762,
+          "error": null
+        },
+        {
+          "ammeter": "greenlee",
+          "timestamp": 1794999518.5010421,
+          "value": 0.11541117243082902,
+          "error": null
+        },
+        {
+          "ammeter": "greenlee",
+          "timestamp": 1794999518.601047,
+          "value": 0.03891661644229522,
+          "error": null
+        },
+        {
+          "ammeter": "greenlee",
+          "timestamp": 1794999518.701635,
+          "value": 0.3927995968106224,
+          "error": null
+        },
+        {
+          "ammeter": "greenlee",
+          "timestamp": 1794999518.801756,
+          "value": 0.02455384157949598,
+          "error": null
+        },
+        {
+          "ammeter": "greenlee",
+          "timestamp": 1794999518.9012415,
+          "value": 0.08488899846580403,
+          "error": null
+        },
+        {
+          "ammeter": "greenlee",
+          "timestamp": 1794999519.0013185,
+          "value": 0.07094161926968004,
+          "error": null
+        },
+        {
+          "ammeter": "greenlee",
+          "timestamp": 1794999519.1014423,
+          "value": 0.11470690557796107,
+          "error": null
+        },
+        {
+          "ammeter": "greenlee",
+          "timestamp": 1794999519.201462,
+          "value": 0.06302093621203396,
+          "error": null
+        },
+        {
+          "ammeter": "greenlee",
+          "timestamp": 1794999519.3013499,
+          "value": 0.022558057770719144,
+          "error": null
+        },
+        {
+          "ammeter": "greenlee",
+          "timestamp": 1794999519.4013476,
+          "value": 0.16623641526557179,
+          "error": null
+        },
+        {
+          "ammeter": "greenlee",
+          "timestamp": 1794999519.5013132,
+          "value": 0.24739323221029277,
+          "error": null
+        },
+        {
+          "ammeter": "greenlee",
+          "timestamp": 1794999519.6013684,
+          "value": 0.0677283856087265,
+          "error": null
+        },
+        {
+          "ammeter": "greenlee",
+          "timestamp": 1794999519.701367,
+          "value": 0.13430951035883493,
+          "error": null
+        },
+        {
+          "ammeter": "greenlee",
+          "timestamp": 1794999519.80122,
+          "value": 0.214815107671354,
+          "error": null
+        },
+        {
+          "ammeter": "greenlee",
+          "timestamp": 1794999519.9011297,
+          "value": 0.6110463289009112,
+          "error": null
+        },
+        {
+          "ammeter": "greenlee",
+          "timestamp": 1794999520.0011654,
+          "value": 0.09520498971017029,
+          "error": null
+        },
+        {
+          "ammeter": "greenlee",
+          "timestamp": 1794999520.1010935,
+          "value": 0.03171922240142531,
+          "error": null
+        },
+        {
+          "ammeter": "greenlee",
+          "timestamp": 1794999520.2011368,
+          "value": 0.12603432677941387,
+          "error": null
+        },
+        {
+          "ammeter": "greenlee",
+          "timestamp": 1794999520.3012686,
+          "value": 0.4896435633207132,
+          "error": null
+        },
+        {
+          "ammeter": "greenlee",
+          "timestamp": 1794999520.4018767,
+          "value": 0.04704095008563285,
+          "error": null
+        },
+        {
+          "ammeter": "greenlee",
+          "timestamp": 1794999520.5012107,
+          "value": 0.12439344808793949,
+          "error": null
+        },
+        {
+          "ammeter": "greenlee",
+          "timestamp": 1794999520.6009953,
+          "value": 0.037741755202698735,
+          "error": null
+        },
+        {
+          "ammeter": "greenlee",
+          "timestamp": 1794999520.7012558,
+          "value": 0.6613693948954122,
+          "error": null
+        },
+        {
+          "ammeter": "greenlee",
+          "timestamp": 1794999520.8010223,
+          "value": 0.03988337035261825,
+          "error": null
+        }
+      ]
+    },
+    "entes": {
+      "stats": {
+        "ammeter": "entes",
+        "total": 30,
+        "valid": 30,
+        "failed": 0,
+        "mean": 75.27533620715006,
+        "median": 73.88976113812785,
+        "std_dev": 43.565705364601044,
+        "minimum": 13.843049927670984,
+        "maximum": 182.42970185767214,
+        "cv_percent": 57.875138869805454,
+        "errors": {}
+      },
+      "measurements": [
+        {
+          "ammeter": "entes",
+          "timestamp": 1794999521.3271177,
+          "value": 18.410783058869406,
+          "error": null
+        },
+        {
+          "ammeter": "entes",
+          "timestamp": 1794999521.4276087,
+          "value": 72.15985021721809,
+          "error": null
+        },
+        {
+          "ammeter": "entes",
+          "timestamp": 1794999521.5275912,
+          "value": 82.18356291044233,
+          "error": null
+        },
+        {
+          "ammeter": "entes",
+          "timestamp": 1794999521.6283584,
+          "value": 182.42970185767214,
+          "error": null
+        },
+        {
+          "ammeter": "entes",
+          "timestamp": 1794999521.727872,
+          "value": 38.87618746480133,
+          "error": null
+        },
+        {
+          "ammeter": "entes",
+          "timestamp": 1794999521.8273368,
+          "value": 13.843049927670984,
+          "error": null
+        },
+        {
+          "ammeter": "entes",
+          "timestamp": 1794999521.9276702,
+          "value": 95.72372934354004,
+          "error": null
+        },
+        {
+          "ammeter": "entes",
+          "timestamp": 1794999522.0275583,
+          "value": 44.068429345883196,
+          "error": null
+        },
+        {
+          "ammeter": "entes",
+          "timestamp": 1794999522.1275625,
+          "value": 62.990913960906276,
+          "error": null
+        },
+        {
+          "ammeter": "entes",
+          "timestamp": 1794999522.2275183,
+          "value": 105.41714989601827,
+          "error": null
+        },
+        {
+          "ammeter": "entes",
+          "timestamp": 1794999522.3277986,
+          "value": 53.3672358266617,
+          "error": null
+        },
+        {
+          "ammeter": "entes",
+          "timestamp": 1794999522.4274101,
+          "value": 115.2582081784854,
+          "error": null
+        },
+        {
+          "ammeter": "entes",
+          "timestamp": 1794999522.5280185,
+          "value": 86.90986394972842,
+          "error": null
+        },
+        {
+          "ammeter": "entes",
+          "timestamp": 1794999522.6275783,
+          "value": 117.66570086300716,
+          "error": null
+        },
+        {
+          "ammeter": "entes",
+          "timestamp": 1794999522.7273746,
+          "value": 36.70734336800794,
+          "error": null
+        },
+        {
+          "ammeter": "entes",
+          "timestamp": 1794999522.8274236,
+          "value": 115.69788297925753,
+          "error": null
+        },
+        {
+          "ammeter": "entes",
+          "timestamp": 1794999522.9275498,
+          "value": 47.796483856963455,
+          "error": null
+        },
+        {
+          "ammeter": "entes",
+          "timestamp": 1794999523.02749,
+          "value": 67.85588806304271,
+          "error": null
+        },
+        {
+          "ammeter": "entes",
+          "timestamp": 1794999523.1277194,
+          "value": 23.562763577701126,
+          "error": null
+        },
+        {
+          "ammeter": "entes",
+          "timestamp": 1794999523.227745,
+          "value": 120.25973483480244,
+          "error": null
+        },
+        {
+          "ammeter": "entes",
+          "timestamp": 1794999523.327877,
+          "value": 101.89107644364367,
+          "error": null
+        },
+        {
+          "ammeter": "entes",
+          "timestamp": 1794999523.4274962,
+          "value": 90.71147209797661,
+          "error": null
+        },
+        {
+          "ammeter": "entes",
+          "timestamp": 1794999523.5272195,
+          "value": 20.74057497578647,
+          "error": null
+        },
+        {
+          "ammeter": "entes",
+          "timestamp": 1794999523.6274476,
+          "value": 29.73336458807768,
+          "error": null
+        },
+        {
+          "ammeter": "entes",
+          "timestamp": 1794999523.727624,
+          "value": 75.6196720590376,
+          "error": null
+        },
+        {
+          "ammeter": "entes",
+          "timestamp": 1794999523.8275604,
+          "value": 37.53810233953887,
+          "error": null
+        },
+        {
+          "ammeter": "entes",
+          "timestamp": 1794999523.9275382,
+          "value": 39.732927695629385,
+          "error": null
+        },
+        {
+          "ammeter": "entes",
+          "timestamp": 1794999524.0275977,
+          "value": 76.34010306467549,
+          "error": null
+        },
+        {
+          "ammeter": "entes",
+          "timestamp": 1794999524.1278665,
+          "value": 107.83756132986974,
+          "error": null
+        },
+        {
+          "ammeter": "entes",
+          "timestamp": 1794999524.2278993,
+          "value": 176.93076813958655,
+          "error": null
+        }
+      ]
+    },
+    "circutor": {
+      "stats": {
+        "ammeter": "circutor",
+        "total": 30,
+        "valid": 30,
+        "failed": 0,
+        "mean": 0.02901215166353541,
+        "median": 0.03157921545440276,
+        "std_dev": 0.01332448671017988,
+        "minimum": 0.006562301051931594,
+        "maximum": 0.054032101779134534,
+        "cv_percent": 45.92726132383717,
+        "errors": {}
+      },
+      "measurements": [
+        {
+          "ammeter": "circutor",
+          "timestamp": 1794999524.7656746,
+          "value": 0.03449199369142868,
+          "error": null
+        },
+        {
+          "ammeter": "circutor",
+          "timestamp": 1794999524.8663373,
+          "value": 0.0269379898788057,
+          "error": null
+        },
+        {
+          "ammeter": "circutor",
+          "timestamp": 1794999524.9661126,
+          "value": 0.054032101779134534,
+          "error": null
+        },
+        {
+          "ammeter": "circutor",
+          "timestamp": 1794999525.066123,
+          "value": 0.043012346572293275,
+          "error": null
+        },
+        {
+          "ammeter": "circutor",
+          "timestamp": 1794999525.1660635,
+          "value": 0.007536692586036954,
+          "error": null
+        },
+        {
+          "ammeter": "circutor",
+          "timestamp": 1794999525.2660723,
+          "value": 0.015949658785953055,
+          "error": null
+        },
+        {
+          "ammeter": "circutor",
+          "timestamp": 1794999525.366035,
+          "value": 0.0371614342408378,
+          "error": null
+        },
+        {
+          "ammeter": "circutor",
+          "timestamp": 1794999525.4660072,
+          "value": 0.040802622240237604,
+          "error": null
+        },
+        {
+          "ammeter": "circutor",
+          "timestamp": 1794999525.5662239,
+          "value": 0.006562301051931594,
+          "error": null
+        },
+        {
+          "ammeter": "circutor",
+          "timestamp": 1794999525.6659784,
+          "value": 0.0351855488505016,
+          "error": null
+        },
+        {
+          "ammeter": "circutor",
+          "timestamp": 1794999525.7659602,
+          "value": 0.04243725544832374,
+          "error": null
+        },
+        {
+          "ammeter": "circutor",
+          "timestamp": 1794999525.8661351,
+          "value": 0.027198737950398424,
+          "error": null
+        },
+        {
+          "ammeter": "circutor",
+          "timestamp": 1794999525.9661727,
+          "value": 0.04223779711274991,
+          "error": null
+        },
+        {
+          "ammeter": "circutor",
+          "timestamp": 1794999526.0660431,
+          "value": 0.01150899084500699,
+          "error": null
+        },
+        {
+          "ammeter": "circutor",
+          "timestamp": 1794999526.1661084,
+          "value": 0.04908991817282829,
+          "error": null
+        },
+        {
+          "ammeter": "circutor",
+          "timestamp": 1794999526.266047,
+          "value": 0.017796813675110112,
+          "error": null
+        },
+        {
+          "ammeter": "circutor",
+          "timestamp": 1794999526.3659668,
+          "value": 0.04105245870249267,
+          "error": null
+        },
+        {
+          "ammeter": "circutor",
+          "timestamp": 1794999526.4661317,
+          "value": 0.02630344311673954,
+          "error": null
+        },
+        {
+          "ammeter": "circutor",
+          "timestamp": 1794999526.5660424,
+          "value": 0.0317923621722744,
+          "error": null
+        },
+        {
+          "ammeter": "circutor",
+          "timestamp": 1794999526.6661086,
+          "value": 0.04172601691676545,
+          "error": null
+        },
+        {
+          "ammeter": "circutor",
+          "timestamp": 1794999526.7658632,
+          "value": 0.0354246789261213,
+          "error": null
+        },
+        {
+          "ammeter": "circutor",
+          "timestamp": 1794999526.8659635,
+          "value": 0.011556915175110217,
+          "error": null
+        },
+        {
+          "ammeter": "circutor",
+          "timestamp": 1794999526.9660091,
+          "value": 0.009982805819985915,
+          "error": null
+        },
+        {
+          "ammeter": "circutor",
+          "timestamp": 1794999527.0660198,
+          "value": 0.03295332352419757,
+          "error": null
+        },
+        {
+          "ammeter": "circutor",
+          "timestamp": 1794999527.1660702,
+          "value": 0.008018736527405363,
+          "error": null
+        },
+        {
+          "ammeter": "circutor",
+          "timestamp": 1794999527.2659764,
+          "value": 0.026560184809143392,
+          "error": null
+        },
+        {
+          "ammeter": "circutor",
+          "timestamp": 1794999527.3661025,
+          "value": 0.018209505330602827,
+          "error": null
+        },
+        {
+          "ammeter": "circutor",
+          "timestamp": 1794999527.466405,
+          "value": 0.03136606873653111,
+          "error": null
+        },
+        {
+          "ammeter": "circutor",
+          "timestamp": 1794999527.566087,
+          "value": 0.038459485814228936,
+          "error": null
+        },
+        {
+          "ammeter": "circutor",
+          "timestamp": 1794999527.6660354,
+          "value": 0.02501636145288538,
+          "error": null
+        }
+      ]
+    }
+  }
+}

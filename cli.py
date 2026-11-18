@@ -2,7 +2,9 @@ import argparse
 import sys
 from dataclasses import asdict
 
-from src.testing.report import format_comparison, format_run_list, format_stats_table
+from src.testing.comparison import evaluate_run
+from src.testing.report import (format_comparison, format_evaluation,
+                                format_run_list, format_stats_table)
 from src.testing.result_store import ResultStore
 from src.testing.test_framework import AmmeterTestFramework
 from src.utils.config import load_config
@@ -37,6 +39,16 @@ def cmd_compare(args, store):
                             args.run_a, args.run_b))
 
 
+def cmd_evaluate(args, store):
+    run = store.load_run(args.run_id)
+    # A failed reading is stored with value None; evaluate_run counts those
+    # as failures (success rate) and keeps them out of the statistics.
+    readings = {name: [m["value"] for m in data["measurements"]]
+                for name, data in run["ammeters"].items()}
+    print(f"Run {run['run_id']}\n")
+    print(format_evaluation(evaluate_run(readings, args.reference), args.reference))
+
+
 def build_parser():
     parser = argparse.ArgumentParser(description="Ammeter testing framework")
     parser.add_argument("--config", default="config/config.yaml", help="path to config file")
@@ -59,6 +71,12 @@ def build_parser():
     compare.add_argument("run_a")
     compare.add_argument("run_b")
     compare.set_defaults(func=cmd_compare)
+
+    evaluate = sub.add_parser("evaluate", help="rank the ammeters of a saved run")
+    evaluate.add_argument("run_id")
+    evaluate.add_argument("--reference", type=float,
+                          help="known true current in amperes (enables an accuracy check)")
+    evaluate.set_defaults(func=cmd_evaluate)
     return parser
 
 

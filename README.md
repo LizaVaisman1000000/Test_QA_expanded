@@ -37,6 +37,8 @@ python cli.py run --ammeters greenlee entes --count 5 --duration 5 --notes "my n
 python cli.py list
 python cli.py show <run id>
 python cli.py compare <run id A> <run id B>
+python cli.py evaluate <run id>                  # rank the ammeters of a saved run
+python cli.py evaluate <run id> --reference 10   # also compare against a known true current (A)
 
 # Quick demo: start the emulators and request one reading from each
 python main.py
@@ -77,7 +79,7 @@ other request is silently ignored.
 
 ## Project structure
 - `main.py`: quick demo that starts the emulators and requests one reading from each
-- `cli.py`: command-line interface (`run`, `list`, `show`, `compare`)
+- `cli.py`: command-line interface (`run`, `list`, `show`, `compare`, `evaluate`)
 - `Ammeters/`: the emulators (`base_ammeter.py`, one file per brand) and `client.py`
 - `config/config.yaml`: all settings
 - `src/testing/`
@@ -85,6 +87,7 @@ other request is silently ignored.
   - `sampler.py`: sampling with configurable count/duration/frequency and drift-free timing
   - `analysis.py`: statistics
   - `result_store.py`: saving, loading, listing and comparing runs
+  - `comparison.py`: precision and accuracy comparison, ranking of the ammeters
   - `report.py`: text tables
   - `test_framework.py`: `AmmeterTestFramework`, ties everything together
 - `src/utils/`: `config.py`, `Utils.py`, `logger.py`
