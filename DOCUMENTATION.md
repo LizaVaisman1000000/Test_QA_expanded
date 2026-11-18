@@ -72,6 +72,14 @@ Two real runs are saved in `results/runs/` (run ids appear in `python cli.py lis
 - Observation: for each ammeter the number of failed readings equalled the number of simulated failures, so a timed-out request does not make the following reading fail. The next request waits in the server's queue (about 0.5 s) and is still answered within the client timeout.
 - Limitation: with 15 readings, 73% against 67% is a difference of one reading, so the ranking of ENTES and CIRCUTOR in this run is not statistically meaningful.
 
+### Logging (`src/utils/logger.py`, `src/testing/test_framework.py`)
+- Each `run` writes one text log file in `results/logs/` (the folder is set by `result_management.log_directory`). It records the start of the run and its notes, whether failure simulation is on, the settings of each ammeter, every failed reading with its position and reason, a one-line summary per ammeter, the id of the saved run, and the end of the run. The log is a second, human-readable record of a test; the JSON file in `results/runs/` is the complete data.
+- The log is closed in a `finally` block, so the file is released even when a test crashes, and an unexpected error is logged before it is raised again. Validation happens before the log file is created, so a rejected request (unknown ammeter, bad settings) leaves no empty log file behind.
+- Log files are regenerated on every run, so `results/logs/` is in `.gitignore`. The saved runs in `results/runs/` are the sample results.
+- Limitation: failed readings are logged after all readings of an ammeter have been collected, so the time on a log line is when it was logged, not when the failure happened. The reading number gives the order, and the exact time of every reading is stored in the saved run.
+- Sample: a run with 6 readings at 5 Hz, failure rate 0.5 and seed 2 logged 2 failed readings for Greenlee (4/6 valid), 5 for ENTES (1/6) and 4 for CIRCUTOR (2/6).
+- Repository clean-up: the assignment contained compiled `__pycache__` files for Python 3.10-3.12 and no root `.gitignore`. A `.gitignore` was added (`venv/`, `__pycache__/`, `*.pyc`, `results/logs/`) and the cache files were removed from Git tracking.
+
 ## Bugs found and fixed
 
 | # | File | Problem | Fix | Why |

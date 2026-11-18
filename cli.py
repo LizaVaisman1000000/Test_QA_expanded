@@ -29,6 +29,7 @@ def cmd_run(args):
         print("\nNote: failure simulation was ON for this run; failed readings are intentional.")
     if outcome["run_id"]:
         print(f"\nSaved as run {outcome['run_id']}")
+        print(f"Log file: {outcome['log_file']}")
 
 
 def cmd_list(args, store):

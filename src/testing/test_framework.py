@@ -6,12 +6,13 @@ from typing import Dict, List, Optional
 from Ammeters.Circutor_Ammeter import CircutorAmmeter
 from Ammeters.Entes_Ammeter import EntesAmmeter
 from Ammeters.Greenlee_Ammeter import GreenleeAmmeter
-from src.testing.ammeter_client import AmmeterClient
+from src.testing.ammeter_client import AmmeterClient, Measurement
 from src.testing.analysis import analyze
 from src.testing.fault_injection import FAILURE_TYPES, make_faulty
 from src.testing.result_store import ResultStore
 from src.testing.sampler import resolve_sampling_plan, collect_samples
 from src.utils.config import load_config
+from src.utils.logger import TestLogger
 
 # Emulator classes, by the name used in config.yaml. Only needed when the
 # framework starts the emulators itself (start_emulators: true).
@@ -56,6 +57,11 @@ class AmmeterTestFramework:
             # instead of silently running a test with no simulation.
             raise ValueError("Failure simulation needs start_emulators: true")
         return simulation
+
+    def _new_logger(self) -> TestLogger:
+        log_dir = (self.config.get("result_management") or {}).get("log_directory",
+                                                                   "results/logs")
+        return TestLogger("ammeter_test", log_dir=log_dir)
 
     def _wait_until_ready(self, port: int, timeout: float = 5.0):
         """Wait until the emulator accepts connections, instead of sleeping a fixed time.
@@ -103,35 +109,66 @@ class AmmeterTestFramework:
         self._wait_until_ready(port)
         self._started.add(name)
 
+    @staticmethod
+    def _log_measurements(logger: TestLogger, name: str, measurements: List[Measurement]):
+        # Every failed reading is logged with its position and reason, so the log
+        # shows exactly when and why a device misbehaved.
+        for position, m in enumerate(measurements, start=1):
+            if not m.ok:
+                logger.warning(f"{name}: reading {position}/{len(measurements)} failed: {m.error}")
+
     # ---- running tests -------------------------------------------------
 
     def run_test(self, ammeter_type: str, count: Optional[int] = None,
                  duration: Optional[float] = None,
-                 frequency: Optional[float] = None) -> Dict:
+                 frequency: Optional[float] = None,
+                 logger: Optional[TestLogger] = None) -> Dict:
         """Test one ammeter. Returns its settings, raw readings and statistics."""
         # Validate everything BEFORE starting anything, so a typo in the name
-        # or the settings fails immediately and not after a long wait.
+        # or the settings fails immediately and not after a long wait. This also
+        # means a rejected request does not leave an empty log file behind.
         client = AmmeterClient.from_config(ammeter_type, self.config)
         count, interval = self._plan(count, duration, frequency)
         simulation = self._simulation_settings()
 
-        self._ensure_emulator(ammeter_type)
-        measurements = collect_samples(client, count, interval)
-        return {
-            "ammeter": ammeter_type,
-            "settings": {
-                "measurements_count": count,
-                "interval_seconds": interval,
-                "sampling_frequency_hz": 1.0 / interval,
-                "duration_seconds": count * interval,
-                "timeout_seconds": client.timeout,
-                # Saved with the run, so failed readings in an old result are
-                # never mistaken for real device faults.
-                "simulation": simulation,
-            },
-            "measurements": measurements,
-            "stats": analyze(measurements),
-        }
+        # When called on its own, this method owns its log file; when called by
+        # run(), the shared logger of that run is used.
+        own_logger = logger is None
+        if own_logger:
+            logger = self._new_logger()
+        try:
+            logger.info(f"{ammeter_type}: {count} readings, one every {interval:g} s, "
+                        f"timeout {client.timeout} s")
+            self._ensure_emulator(ammeter_type)
+            measurements = collect_samples(client, count, interval)
+            self._log_measurements(logger, ammeter_type, measurements)
+            stats = analyze(measurements)
+            summary = f"{ammeter_type}: {stats.valid}/{stats.total} readings valid"
+            if stats.median is not None:
+                summary += f", median {stats.median:.4g} A"
+            logger.info(summary)
+            return {
+                "ammeter": ammeter_type,
+                "settings": {
+                    "measurements_count": count,
+                    "interval_seconds": interval,
+                    "sampling_frequency_hz": 1.0 / interval,
+                    "duration_seconds": count * interval,
+                    "timeout_seconds": client.timeout,
+                    # Saved with the run, so failed readings in an old result are
+                    # never mistaken for real device faults.
+                    "simulation": simulation,
+                },
+                "measurements": measurements,
+                "stats": stats,
+                "log_file": logger.log_file,
+            }
+        except Exception as e:
+            logger.error(f"{ammeter_type}: test aborted: {e}")
+            raise
+        finally:
+            if own_logger:
+                logger.close()
 
     def run(self, ammeters: Optional[List[str]] = None, count: Optional[int] = None,
             duration: Optional[float] = None, frequency: Optional[float] = None,
@@ -139,17 +176,34 @@ class AmmeterTestFramework:
         """Test several ammeters (all configured ones by default) and save one run.
 
         Ammeters are tested one after another, so the total time is roughly
-        (number of ammeters x duration).
+        (number of ammeters x duration). One log file covers the whole run.
         """
         names = list(ammeters) if ammeters else list(self.config["ammeters"])
-        for name in names:   # validate all names first, before any waiting
+        for name in names:   # validate everything first, before any waiting
             AmmeterClient.from_config(name, self.config)
-        results = {name: self.run_test(name, count, duration, frequency) for name in names}
+        self._plan(count, duration, frequency)
+        simulation = self._simulation_settings()
 
-        run_id = None
-        if save:
-            settings = next(iter(results.values()))["settings"]
-            run_id = self.store.save_run(
-                {name: r["measurements"] for name, r in results.items()},
-                settings, notes)
-        return {"run_id": run_id, "results": results}
+        logger = self._new_logger()
+        try:
+            logger.info(f"Test run started: ammeters {', '.join(names)}"
+                        + (f", notes: {notes}" if notes else ""))
+            if simulation:
+                logger.warning(f"Failure simulation is ON: {simulation}")
+            results = {name: self.run_test(name, count, duration, frequency, logger)
+                       for name in names}
+
+            run_id = None
+            if save:
+                settings = next(iter(results.values()))["settings"]
+                run_id = self.store.save_run(
+                    {name: r["measurements"] for name, r in results.items()},
+                    settings, notes)
+                logger.info(f"Saved as run {run_id}")
+            logger.info("Test run finished")
+            return {"run_id": run_id, "log_file": logger.log_file, "results": results}
+        except Exception as e:
+            logger.error(f"Test run aborted: {e}")
+            raise
+        finally:
+            logger.close()   # release the file (on Windows an open file cannot be deleted)

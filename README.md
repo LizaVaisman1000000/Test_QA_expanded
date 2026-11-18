@@ -52,6 +52,8 @@ min, max, coefficient of variation) and saves the run as a JSON file in
 `results/runs/`. Failed readings are excluded from the statistics and listed
 with the reason.
 
+Each `run` also writes a text log file in `results/logs/` (its path is printed at the end). It lists every failed reading with its position and reason.
+
 ### Using the framework from Python
 ```python
 from src.testing.test_framework import AmmeterTestFramework
@@ -70,6 +72,7 @@ print(outcome["results"]["greenlee"]["stats"])
 | `testing.simulation.*` | failure simulation: `enabled`, `failure_rate` (0 to 1), `failure_types` (`timeout`, `garbage`, `no_reply`), `seed` (repeatable pattern); needs `start_emulators: true` |
 | `ammeters.<name>.port`, `.command` | one block per ammeter; add a block to add an ammeter |
 | `result_management.directory` | where saved runs are stored |
+| `result_management.log_directory` | where the text log of each run is written (not committed to Git) |
 
 ## Ammeter emulators
 | Ammeter | Port | Command | Measurement |
@@ -95,6 +98,7 @@ other request is silently ignored.
   - `fault_injection.py`: makes an emulator fail on purpose (timeout, garbage reply, no reply)
   - `report.py`: text tables
   - `test_framework.py`: `AmmeterTestFramework`, ties everything together
-- `src/utils/`: `config.py`, `Utils.py`, `logger.py`
+- `src/utils/`: `config.py`, `Utils.py`, `logger.py` (per-run log file)
 - `results/runs/`: sample test results (one JSON file per run)
+- `results/logs/`: text log of each run (created when you run a test; not committed)
 - `DOCUMENTATION.md`: design decisions and the list of bugs fixed in the provided code

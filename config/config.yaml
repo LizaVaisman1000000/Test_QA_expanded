@@ -11,7 +11,7 @@ testing:
     failure_rate: 0.2          # probability that one reading fails (0 to 1)
     failure_types: [timeout, garbage, no_reply]
     seed: null                 # a number makes the failure pattern repeatable
-    
+
 ammeters:
   greenlee:
     port: 5000
@@ -31,3 +31,4 @@ analysis:
 
 result_management:
   directory: results/runs      # one JSON file per test run is saved here
+  log_directory: results/logs  # one text log file per test run is written here
