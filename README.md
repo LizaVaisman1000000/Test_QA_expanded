@@ -1,54 +1,92 @@
-# Ammeter Emulators
+# Ammeter Testing Framework
 
-This project provides emulators for different types of ammeters: Greenlee, ENTES, and CIRCUTOR. Each ammeter emulator runs on a separate thread and can respond to current measurement requests.
+A framework for testing current-measurement devices. It talks to three ammeter
+emulators (Greenlee, ENTES, CIRCUTOR) through one common interface, takes
+measurements with configurable timing, computes statistics, and archives every
+test run so runs can be listed and compared later.
 
-## Project Structure
+## Requirements
+- Python 3.10 or newer (developed and tested on Python 3.13)
+- One external library: PyYAML (used by the provided `src/utils/config.py`)
 
-- `Ammeters/`
-  - `main.py`: Main script to start the ammeter emulators and request current measurements.
-  - `Circutor_Ammeter.py`: Emulator for the CIRCUTOR ammeter.
-  - `Entes_Ammeter.py`: Emulator for the ENTES ammeter.
-  - `Greenlee_Ammeter.py`: Emulator for the Greenlee ammeter.
-  - `base_ammeter.py`: Base class for all ammeter emulators.
-  - `client.py`: Client to request current measurements from the ammeter emulators.
-- `config/`
-  - `config.yaml`: Configuration file for the ammeter emulators.
-- `examples/`
-  - `run_test.py`: super lyze example for run test **don't use it**.
-- `src/`
-  - `testing/`
-    - `AmmeterTester.py`: Class to test the ammeter emulators.
-  - `utils/`
-    - `config.py`: Configuration settings.
-    - `logger.py`: Logging setup.
-    - `Utils.py`: Utility functions, including `generate_random_float`.
+## Installation
+```sh
+python -m venv venv
+venv\Scripts\activate          # Windows (PowerShell: venv\Scripts\Activate.ps1)
+source venv/bin/activate       # Linux / macOS
+pip install -r requirements.txt
+```
+
+Note: PyYAML had no prebuilt package for Python 3.15 when this was written.
+If installation fails, use Python 3.13.
 
 ## Usage
+Run all commands from the project root. The emulators are started
+automatically (see `start_emulators` in `config/config.yaml`).
 
-# Ammeter Emulators
-
-## Greenlee Ammeter
-
-- **Port**: 5000
-- **Command**: `MEASURE_GREENLEE -get_measurement`
-- **Measurement Logic**: Calculates current using voltage (1V - 10V) and (0.1Ω - 100Ω).
-- **Measurement method** : Ohm's Law: I = V / R
-
-## ENTES Ammeter
-
-- **Port**: 5001
-- **Command**: `MEASURE_ENTES -get_data`
-- **Measurement Logic**: Calculates current using magnetic field strength (0.01T - 0.1T) and calibration factor (500 - 2000).
-- **Measurement method** : Hall Effect: I = B * K
-
-## CIRCUTOR Ammeter
-
-- **Port**: 5002
-- **Command**: `MEASURE_CIRCUTOR -get_measurement`
-- **Measurement Logic**: Calculates current using voltage values (0.1V - 1.0V) over a number of samples and a random time step (0.001s - 0.01s).
-- **Measurement method** : Rogowski Coil Integration: I = ∫V dt
-
-To start the ammeter emulators and request current measurements, run the `main.py` script:
 ```sh
+# Test all three ammeters: 10 readings at 2 Hz (defaults come from config.yaml)
+python cli.py run
+
+# Choose the settings yourself (any two of count / duration / frequency)
+python cli.py run --count 20 --frequency 5
+python cli.py run --duration 10 --frequency 2
+python cli.py run --ammeters greenlee entes --count 5 --duration 5 --notes "my note"
+
+# Work with saved results
+python cli.py list
+python cli.py show <run id>
+python cli.py compare <run id A> <run id B>
+
+# Quick demo: start the emulators and request one reading from each
 python main.py
 ```
+
+Every `run` prints a statistics table (mean, median, standard deviation,
+min, max, coefficient of variation) and saves the run as a JSON file in
+`results/runs/`. Failed readings are excluded from the statistics and listed
+with the reason.
+
+### Using the framework from Python
+```python
+from src.testing.test_framework import AmmeterTestFramework
+
+framework = AmmeterTestFramework()
+outcome = framework.run(count=10, frequency=2, notes="example")
+print(outcome["results"]["greenlee"]["stats"])
+```
+
+## Configuration (`config/config.yaml`)
+| Setting | Meaning |
+|---|---|
+| `testing.start_emulators` | `true`: start the emulators automatically; `false`: use ammeters that are already running |
+| `testing.host`, `testing.timeout_seconds` | where to connect and how long to wait for a reply |
+| `testing.sampling.*` | default count / duration / frequency (any two are enough) |
+| `ammeters.<name>.port`, `.command` | one block per ammeter; add a block to add an ammeter |
+| `result_management.directory` | where saved runs are stored |
+
+## Ammeter emulators
+| Ammeter | Port | Command | Measurement |
+|---|---|---|---|
+| Greenlee | 5000 | `MEASURE_GREENLEE -get_measurement` | Ohm's law: I = V / R (V 1-10 V, R 0.1-100 ohm) |
+| ENTES | 5001 | `MEASURE_ENTES -get_data` | Hall effect: I = B x K (B 0.01-0.1 T, K 500-2000) |
+| CIRCUTOR | 5002 | `MEASURE_CIRCUTOR -get_measurement` | Rogowski coil: I = integral of V dt (10 samples) |
+
+An emulator answers only when the request matches its command exactly; any
+other request is silently ignored.
+
+## Project structure
+- `main.py`: quick demo that starts the emulators and requests one reading from each
+- `cli.py`: command-line interface (`run`, `list`, `show`, `compare`)
+- `Ammeters/`: the emulators (`base_ammeter.py`, one file per brand) and `client.py`
+- `config/config.yaml`: all settings
+- `src/testing/`
+  - `ammeter_client.py`: unified interface; every reading is a `Measurement`
+  - `sampler.py`: sampling with configurable count/duration/frequency and drift-free timing
+  - `analysis.py`: statistics
+  - `result_store.py`: saving, loading, listing and comparing runs
+  - `report.py`: text tables
+  - `test_framework.py`: `AmmeterTestFramework`, ties everything together
+- `src/utils/`: `config.py`, `Utils.py`, `logger.py`
+- `results/runs/`: sample test results (one JSON file per run)
+- `DOCUMENTATION.md`: design decisions and the list of bugs fixed in the provided code

@@ -68,3 +68,4 @@ Two real runs are saved in `results/runs/` (run ids appear in `python cli.py lis
 ## README inconsistencies
 - README lists `src/testing/AmmeterTester.py`, but the repo contains `src/testing/test_framework.py`.
 - README places `main.py` in `Ammeters/`, but its imports only work from the project root.
+The README was rewritten to match the final project: it listed AmmeterTester.py (never existed) and main.py inside Ammeters/.
