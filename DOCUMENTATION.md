@@ -64,6 +64,7 @@ Two real runs are saved in `results/runs/` (run ids appear in `python cli.py lis
 | 4 | Circutor_Ammeter.py | Expected `MEASURE_CIRCUTOR -get_measurement -current`, which disagrees with README and config.yaml | Removed the `-current` suffix | Two documents agree on the shorter command, so the emulator was the outlier |
 | 5 | base_ammeter.py | Server could fail to restart immediately ("Address already in use") on some systems | Added `SO_REUSEADDR` before `bind` | The OS briefly reserves a closed port (mainly Linux/macOS); this allows immediate reuse. Not reproducible on Windows, added for cross-platform compatibility |
 | 6 | client.py | Value was only printed, never returned; no timeout or error handling | Function now returns a float (or None), has a timeout, and catches network and parsing errors | Later code needs the numbers; a dead emulator must not hang or crash a test |
+| 7 | logger.py | `TestLogger` created a log folder and file name but never set a level or attached a file handler, so nothing was ever logged | Set the level, attached a file handler with a timestamped format, disabled propagation, and removed old handlers so repeated creation does not duplicate lines; added `close()` | A logger without a handler discards every message; handlers must be reset because `getLogger` returns the same object for the same name |
 
 ## README inconsistencies
 - README lists `src/testing/AmmeterTester.py`, but the repo contains `src/testing/test_framework.py`.
